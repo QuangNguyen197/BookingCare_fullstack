@@ -17,7 +17,7 @@ let createNewUser = async (data) => {
         gender: data.gender === "1" ? true : false,
         roleId: data.roleId,
       });
-      resolve("Create a new user succeed!");
+      resolve("Create a new user success!");
     } catch (e) {
       reject(e);
     }
@@ -49,30 +49,27 @@ let getAllUser = () => {
 };
 
 let getUserInfoById = (userId) => {
-  return new Promise(async(resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     try {
       let user = await db.User.findOne({
-        where: { id: userId},
+        where: { id: userId },
         raw: true,
-
-      })
+      });
       if (user) {
-        resolve(user)
+        resolve(user);
+      } else {
+        resolve({});
       }
-      else {
-        resolve({})
-      }
-    }catch (e) {
+    } catch (e) {
       reject(e);
     }
-
-  })
-}
+  });
+};
 let updateUserData = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
       let user = await db.User.findOne({
-        where: { id: data.id }
+        where: { id: data.id },
       });
       if (user) {
         user.firstName = data.firstName;
@@ -81,8 +78,8 @@ let updateUserData = (data) => {
 
         await user.save();
 
-        // Re-rendering user table after editiing 
-        let allUsers = await db.User.findAll()
+        // Re-rendering user table after editiing
+        let allUsers = await db.User.findAll();
         resolve(allUsers);
         resolve();
       } else {
@@ -93,27 +90,25 @@ let updateUserData = (data) => {
       reject(e);
     }
   });
-}
+};
 
 let deleteUserById = (id) => {
-  return new Promise (async(resolve, reject)=> {
+  return new Promise(async (resolve, reject) => {
     try {
       let user = await db.User.findOne({
-        where: {id: id}
+        where: { id: id },
       });
       if (user) {
         await user.destroy();
       }
-      let allUsers = await db.User.findAll()
+      let allUsers = await db.User.findAll();
       resolve(allUsers);
       resolve(); // return;
-      
-
     } catch (e) {
       reject(e);
     }
-  })
-}
+  });
+};
 
 module.exports = {
   createNewUser: createNewUser,

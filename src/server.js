@@ -7,11 +7,54 @@ require("dotenv").config();
 import connectDB from "./config/connectDB.js";
 import cors from "cors";
 
+/* Config cors issue with import the external library
+Using middleware : 
+Middleware mechanism: 
+Ususally, client -> call api -> controller
+
+=> With middleware, client => call api => call api => middleware => controller
+
+
+*/
+
+// Add headers
 let app = express();
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ exrtend: true }));
-app.user(cors({ origin: true }));
+app.use(function (req, res, next) {
+  // Website you wish to allow to connect
+  res.setHeader("Access-Control-Allow-Origin", process.env.URL_REACT);
+
+  // Request methods you wish to allow
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+  );
+
+  // Request headers you wish to allow
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With,content-type"
+  );
+
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader("Access-Control-Allow-Credentials", true);
+
+  // Pass to next layer of middleware
+  next();
+});
+
+// app.use(express.json()); // <-- This is required for JSON POST bodies
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+app.use(
+  cors({
+    origin: "http://localhost:3000", // your frontend origin
+    credentials: true,
+  })
+);
 
 configViewEngine(app);
 initWebRoutes(app);
